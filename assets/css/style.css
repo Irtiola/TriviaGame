@@ -1,0 +1,13 @@
+/* body{
+    background-image: url("../images/banksy02.jpg")
+} */
+
+h1{
+    font-family: 'Amiri', serif;
+    text-align: center;
+
+}
+
+#quizCard{
+    border:solid 2 px greenyellow;
+}

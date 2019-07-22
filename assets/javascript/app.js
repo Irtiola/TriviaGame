@@ -1,8 +1,8 @@
-var correctAnswers = 0;    //create var for counting correct questions 
-var incorrectAnswers = 0;  //create var for counting incorrect questions 
-var unansweredQuestions = 0; //create var for counting unasnswered questions 
-var qTime = 10;          //var for setting timer
-var counterQ = 0;            //var for switching between questions
+var correctA = 0;    
+var incorrectA = 0;  
+var unansweredQ = 0; 
+var qTime = 10;     
+var counterQ = 0;  //var for switching between questios
 var quizQ = [
             {
             question: " Q1 - Which of the following jQuery selector selects all elements available in a DOM?",
@@ -20,7 +20,7 @@ var quizQ = [
             correctAnsw: "empty()"
             },
             {
-            question: "Q4 - Can we add more than one ‘document.ready’ function in a page?",
+            question: "Q4 - Can we add more than one document.ready function in a page?",
             choices: ["YES","NO","I have no idea!"],
             correctAnsw: "YES"
             },
@@ -45,9 +45,9 @@ var quizQ = [
             correctAnsw: "67"
             },
             {
-            question: "Q9 - What are JavaScript Cookies?",
-            choices: ["a small sweet cake, typically round, flat, and crisp","Cookies are the small test files stored in a computer and it gets created when the user visits the websites to store information that they need.","a person of a specified kind(tought cookie)"],
-            correctAnsw: "Cookies are the small test files stored in a computer and it gets created when the user visits the websites to store information that they need."
+            question: "Q9 - Which of the following is the correct way to create a div element with a link text 'Hello' with jQuery?",
+            choices: ['$(“#idName”).create(“div”).html(“Hello“);','$(“#idName”).create(“div”).text(“Hello"','$(“#idName”).append(“Hello“);'],
+            correctAnsw: "C$(“#idName”).append(“Hello“);"
             },
             {
             question: "Q10 - Which built-in method returns the length of the string?",
@@ -57,64 +57,99 @@ var quizQ = [
 
             ,];
 
-            // function that creates card with questions and answer buttons      
+// function that creates card with questions and answer buttons      
     function showQuizCard(){
         $("h3").text(quizQ[counterQ].question);
-        for (var i = 0; i < quizQ[counterQ].choices.length; i++){
-        $("div").append("<button>");
-        // $("div").add("<p id ='time'>");
-        $("div button:last-child").text(quizQ[counterQ].choices[i]);
-        $("div button:last-child").attr("value", quizQ[counterQ].choices[i]);
-        $("div button:last-child").attr("disabled", false);
-        $("div").prepend("<p id='time'>")
-        }
+        for (var i = 0; i < quizQ[counterQ].choices.length; i++) {
+            $("div").append("<button>");
+            $("div button:last-child").text(quizQ[counterQ].choices[i]);
+            $("div button:last-child").attr("value", quizQ[counterQ].choices[i]);
+            $("div button:last-child").attr("class", "choices");
+            }
+            $("div").append("<p id='time'>");
+            $("#time").after("<p id='result'>");
+            $("#result").after('<button id="next">');
+            $("button[id='next']").text("Next");
     };
 
-// function is responsible for what happens after button start clicked
+// function is responsible for what happens after button start clicked --> clears all scores
+//and showing first question
     $('#start').on('click', function() {
-            correctAnswers = 0;
-            incorrectAnswers = 0;
-            unansweredQuestions = 0;
-            counterQ = 0;
-            qTime = 10;
-            $("div").empty();
-            // $("div").append("<h1>");
-            // $("h1").text("Javascript & Jquery quiz");
-            $("div").append("<h3>");
-            showQuizCard();
-            
-           
+        correctA = 0;
+        incorrectA = 0;
+        unansweredQ = 0;
+        counterQ = 0;
+        qTime = 10;
+        $("div").empty();
+        $("div").append("<h3>");
+        showQuizCard();   
         })
-        
-    function countBackwards(){
+//showing timer in sec backwards + informing user if time is out
+    function showingTimer(){
         qTime--;
         $("#time").text("Time:  " + qTime);
         if (qTime==0){
-            $("#time").after("<p id='result'>");
             $("#result").text("Time is out! Correct answer is: " + quizQ[counterQ].correctAnsw);
-            unansweredQuestions+=1;
-                $("#result").after('<button type="next">');
-                $("button[type='next']").text("Next");
-                clearInterval(timeOut);
-                
-                
-        }
-        
-	}
-    var timeOut = setInterval(countBackwards, 1*1000);
-
-    function guessTheAnswer(){
+            unansweredQ+=1;
+            clearInterval(timeOut);
+            $("div button[class='choices']").attr("disabled", true);    
+        }      
+	};
+    var timeOut = setInterval(showingTimer, 1*1000);
+//when user chooses the answer it is comparing with the right answer and informing user
+    $(document).on("click", '.choices', function(){
         var userCh = $(this).val();
-        console.log(userCh);
+        clearInterval(timeOut);
+        $("div button[class='choices']").attr("disabled", true);
         if(userCh == quizQ[counterQ].correctAnsw){
-        $("#result").text("Nice job! Correct answer is: " + quizQ[counterQ].correctAnsw);
-        correctAnswers+=1;
+            $("#result").text("Nice job! Correct answer is: " + quizQ[counterQ].correctAnsw);
+            correctA+=1;
+        } else {     
+            $("#result").text("Sorry, not this time! Correct answer is: " + quizQ[counterQ].correctAnsw);
+            incorrectA+=1;
+        }
+    });
+// functionality for button Next -- moving to the next question
+    $(document).on("click","#next", function(){
+        $("div").empty();
+        $("div").append("<h3>");
+        showQuizCard();
+        $("button").remove();
+        nextQuestion();
+        clearInterval(timeOut);
+
+         
+    });
+//switching from one q to another one by one   
+    function nextQuestion() {
+        if (counterQ == quizQ.length -1) {
+            showFinalScore();
+        } else {
+            qTime = 10;
+            counterQ += 1;
+            qTime = 10;
+            var timeOut = setInterval(showingTimer, 1*1000);
+            
+            $("div").empty();
+            $("div").append("<h3>");
+            showQuizCard();
+            showingTimer();
         }
     }
-//  $("button[type='next']").on("click", function(){
-//     $("div").empty();
-//     $("div").append("<h1>");
-//     $("h1").text("Javascript & Jquery quiz");
-//     $("div").append("<h3>");
-//      showQuizCard();
-//  })
+ //used in case when all q were answered and offer to try again.   
+    function showFinalScore(){
+        
+    $("button").remove();
+    $("h2").text("Final score:");
+    $("div").append("<p>");
+    $("div p:last-child").text("Correct answers: " + correctA);
+    $("div").append("<p>");
+    $("div p:last-child").text("Incorrect answers: " + incorrectA);
+    $("div").append("<p>");
+    $("div p:last-child").text("Unanswered: " + unansweredQ);
+    $("div").append("<button>");
+    $("button").text("Wanna try again?");
+    $("button").attr("id", "start");
+    }    
+        
+    

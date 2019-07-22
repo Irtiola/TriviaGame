@@ -1,6 +1,6 @@
 var correctA = 0;    
 var incorrectA = 0;  
-var unansweredQ = 0; 
+var skipped = 0; 
 var qTime = 10;     
 var counterQ = 0;  //var for switching between questios
 var quizQ = [
@@ -45,9 +45,9 @@ var quizQ = [
             correctAnsw: "67"
             },
             {
-            question: "Q9 - Which of the following is the correct way to create a div element with a link text 'Hello' with jQuery?",
-            choices: ['$(“#idName”).create(“div”).html(“Hello“);','$(“#idName”).create(“div”).text(“Hello"','$(“#idName”).append(“Hello“);'],
-            correctAnsw: "C$(“#idName”).append(“Hello“);"
+            question: "Q9 - Do you like Javascript?",
+            choices: ['Love it!','Not bad','Hate it!'],
+            correctAnsw: "Hate it!"
             },
             {
             question: "Q10 - Which built-in method returns the length of the string?",
@@ -74,7 +74,7 @@ var quizQ = [
 
 // function is responsible for what happens after button start clicked --> clears all scores
 //and showing first question
-    $('#start').on('click', function() {
+    $('#start', '#again').on('click', function() {
         correctA = 0;
         incorrectA = 0;
         unansweredQ = 0;
@@ -84,18 +84,20 @@ var quizQ = [
         $("div").append("<h3>");
         showQuizCard();   
         })
+
 //showing timer in sec backwards + informing user if time is out
     function showingTimer(){
         qTime--;
         $("#time").text("Time:  " + qTime);
         if (qTime==0){
             $("#result").text("Time is out! Correct answer is: " + quizQ[counterQ].correctAnsw);
-            unansweredQ+=1;
+            skipped+=1;
             clearInterval(timeOut);
             $("div button[class='choices']").attr("disabled", true);    
         }      
 	};
     var timeOut = setInterval(showingTimer, 1*1000);
+
 //when user chooses the answer it is comparing with the right answer and informing user
     $(document).on("click", '.choices', function(){
         var userCh = $(this).val();
@@ -104,9 +106,12 @@ var quizQ = [
         if(userCh == quizQ[counterQ].correctAnsw){
             $("#result").text("Nice job! Correct answer is: " + quizQ[counterQ].correctAnsw);
             correctA+=1;
+            clearInterval(timeOut);
+
         } else {     
             $("#result").text("Sorry, not this time! Correct answer is: " + quizQ[counterQ].correctAnsw);
             incorrectA+=1;
+            clearInterval(timeOut);
         }
     });
 // functionality for button Next -- moving to the next question
@@ -116,20 +121,17 @@ var quizQ = [
         showQuizCard();
         $("button").remove();
         nextQuestion();
-        clearInterval(timeOut);
-
-         
+               
     });
 //switching from one q to another one by one   
     function nextQuestion() {
-        if (counterQ == quizQ.length -1) {
+        if (counterQ == quizQ.length-1) {
             showFinalScore();
         } else {
             qTime = 10;
             counterQ += 1;
             qTime = 10;
-            var timeOut = setInterval(showingTimer, 1*1000);
-            
+            timeOut = setInterval(showingTimer, 1*1000);
             $("div").empty();
             $("div").append("<h3>");
             showQuizCard();
@@ -138,7 +140,9 @@ var quizQ = [
     }
  //used in case when all q were answered and offer to try again.   
     function showFinalScore(){
-        
+    $("h3").remove();
+    $("#time").remove();
+    $("#result").remove();
     $("button").remove();
     $("h2").text("Final score:");
     $("div").append("<p>");
@@ -146,10 +150,10 @@ var quizQ = [
     $("div").append("<p>");
     $("div p:last-child").text("Incorrect answers: " + incorrectA);
     $("div").append("<p>");
-    $("div p:last-child").text("Unanswered: " + unansweredQ);
-    $("div").append("<button>");
-    $("button").text("Wanna try again?");
-    $("button").attr("id", "start");
-    }    
+    $("div p:last-child").text("Unanswered: " + skipped);
+    $("div").append("<button id='again'>");
+    $("button").attr("id", "again").text("Do it again")
+    
+    };
         
     

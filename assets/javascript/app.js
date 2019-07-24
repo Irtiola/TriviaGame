@@ -61,10 +61,16 @@ var quizQ = [{
 function showQuizCard() {
     $("h3").text(quizQ[counterQ].question);
     for (var i = 0; i < quizQ[counterQ].choices.length; i++) {
-        $("div").append("<button>");
-        $("div button:last-child").text(quizQ[counterQ].choices[i]);
-        $("div button:last-child").attr("value", quizQ[counterQ].choices[i]);
-        $("div button:last-child").attr("class", "choices");
+        // $("div").append("<button>");
+        // $("div button:last-child").text(quizQ[counterQ].choices[i]);
+        // $("div button:last-child").attr("value", quizQ[counterQ].choices[i]);
+        // $("div button:last-child").attr("class", "choices");
+
+        var b = $("<button>");
+        b.text(quizQ[counterQ].choices[i]);
+        b.attr("value", quizQ[counterQ].choices[i]);
+        b.attr("class", "choices");
+        $("div").append(b);
     }
     $("div").append("<p id='time'>");
     $("#time").after("<p id='result'>");
